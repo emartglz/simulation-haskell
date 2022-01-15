@@ -14,12 +14,20 @@ main :: IO ()
 main = do
   putStrLn "enter value for rows: "
   input1 <- getLine
+  let r = (read input1 :: Int)
+
   putStrLn "enter value for columns: "
   input2 <- getLine
-  let r = (read input1 :: Int)
   let c = (read input2 :: Int)
-  let b = board r c
+
+  putStrLn "enter value for kids: "
+  input3 <- getLine
+  let k = (read input3 :: Int)
+
+  let boardEmpty = board r c
+
   g <- newStdGen
   let seed = fst (random g)
-  let bWithObstacles = addObstaclesBoard seed 1 b
-  print bWithObstacles
+  let boardWithCorrals = addCorralsBoard seed k boardEmpty
+  let boardWithObstacles = addObstaclesBoard (seed + 1) 1 boardWithCorrals
+  print boardWithObstacles
