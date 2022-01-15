@@ -1,28 +1,7 @@
 module Board (board, addObstaclesBoard) where
 
-import Control.Monad.State (State, evalState, get, put)
-import System.Random
+import Random (rand, randomRange, runRandom)
 import Utils (replace, _1)
-
-type R a = State StdGen a
-
-runRandom :: R a -> Int -> a
-runRandom action seed = evalState action $ mkStdGen seed
-
-rand :: R Int
-rand = do
-  gen <- get
-  let (r, gen') = random gen
-  put gen'
-  return r
-
-randomRange :: Int -> Int -> Int -> Int
-randomRange low up n
-  | low == up = low
-  | a > 0 = low + a
-  | otherwise = low + (-1 * a)
-  where
-    a = mod n (up - low)
 
 type CellType = String
 

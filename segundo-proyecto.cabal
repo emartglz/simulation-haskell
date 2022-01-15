@@ -24,7 +24,8 @@ extra-source-files: CHANGELOG.md
 library
     exposed-modules:  
         Board,
-        Utils
+        Utils,
+        Random
 
     -- Modules included in this library but not exported.
     -- other-modules:
