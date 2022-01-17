@@ -20,15 +20,24 @@ main = do
   input2 <- getLine
   let c = (read input2 :: Int)
 
-  putStrLn "enter value for kids: "
+  putStrLn "enter value for obstacles: "
   input3 <- getLine
-  let k = (read input3 :: Int)
+  let obstacles = (read input3 :: Int)
+
+  putStrLn "enter value for kids: "
+  input4 <- getLine
+  let kids = (read input4 :: Int)
+
+  putStrLn "enter value for robots: "
+  input5 <- getLine
+  let robots = (read input5 :: Int)
 
   let boardEmpty = board r c
 
   g <- newStdGen
   let seed = fst (random g)
-  let boardWithCorrals = addCorralsBoard seed k boardEmpty
-  let boardWithObstacles = addGenericBoard (seed + 1) "obstacle" 1 boardWithCorrals
-  let boardWithChild = addGenericBoard (seed + 1) "child" k boardWithObstacles
-  print boardWithChild
+  let boardWithCorrals = addCorralsBoard seed kids boardEmpty
+  let boardWithObstacles = addGenericBoard (seed + 1) "obstacle" obstacles boardWithCorrals
+  let boardWithChild = addGenericBoard (seed + 2) "child" kids boardWithObstacles
+  let boardWithRobot = addGenericBoard (seed + 3) "robot" robots boardWithChild
+  print boardWithRobot
