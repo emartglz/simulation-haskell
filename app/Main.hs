@@ -30,4 +30,5 @@ main = do
   let seed = fst (random g)
   let boardWithCorrals = addCorralsBoard seed k boardEmpty
   let boardWithObstacles = addObstaclesBoard (seed + 1) 1 boardWithCorrals
-  print boardWithObstacles
+  let boardWithChild = addChildBoard (seed + 1) k boardWithObstacles
+  print boardWithChild

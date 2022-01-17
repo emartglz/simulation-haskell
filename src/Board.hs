@@ -1,7 +1,7 @@
-module Board (board, addCorralsBoard, addObstaclesBoard, filterByTypeCell) where
+module Board (board, addCorralsBoard, addObstaclesBoard, filterByTypeCell, addChildBoard) where
 
-import Random (rand, randomRange, runRandom)
-import Utils (getBoardCell, getCellType, getColumn, getPosition, getRow, replace)
+import Random
+import Utils
 
 type CellType = String
 
@@ -106,3 +106,13 @@ addCorralsBoard seed amount board
      in addCorralsBoard rER (amount - 1) boardR
   where
     corralsAlready = boardCellTypeEncounter "corral" board
+
+addChildBoard :: Int -> Int -> Board -> Board
+addChildBoard seed amount board
+  | amount == 0 = board
+  | otherwise =
+    let emptyCells = boardCellTypeEncounter "empty" board
+        randomCell = randomRange 0 (length emptyCells - 1) (runRandom rand seed)
+        ((rR, rC), _) = emptyCells !! randomCell
+        boardR = replace board rR (replace (board !! rR) rC ((rR, rC), ("child", False, False)))
+     in addChildBoard rR (amount - 1) boardR
