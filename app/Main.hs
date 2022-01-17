@@ -29,6 +29,6 @@ main = do
   g <- newStdGen
   let seed = fst (random g)
   let boardWithCorrals = addCorralsBoard seed k boardEmpty
-  let boardWithObstacles = addObstaclesBoard (seed + 1) 1 boardWithCorrals
-  let boardWithChild = addChildBoard (seed + 1) k boardWithObstacles
+  let boardWithObstacles = addGenericBoard (seed + 1) "obstacle" 1 boardWithCorrals
+  let boardWithChild = addGenericBoard (seed + 1) "child" k boardWithObstacles
   print boardWithChild

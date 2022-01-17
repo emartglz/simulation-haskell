@@ -1,4 +1,4 @@
-module Board (board, addCorralsBoard, addObstaclesBoard, filterByTypeCell, addChildBoard) where
+module Board (board, addCorralsBoard, addGenericBoard, filterByTypeCell) where
 
 import Random
 import Utils
@@ -45,16 +45,6 @@ boardCellTypeEncounterColmn cellType board r c cEnd
   | c == cEnd = []
   | getCellType (getBoardCell (board !! r !! c)) == cellType = (board !! r !! c) : boardCellTypeEncounterColmn cellType board r (c + 1) cEnd
   | otherwise = boardCellTypeEncounterColmn cellType board r (c + 1) cEnd
-
-addObstaclesBoard :: Int -> Int -> Board -> Board
-addObstaclesBoard seed amount board
-  | amount == 0 = board
-  | otherwise = addObstaclesBoard rR (amount - 1) boardR
-  where
-    emptyCells = boardCellTypeEncounter "empty" board
-    randomCell = randomRange 0 (length emptyCells - 1) (runRandom rand seed)
-    ((rR, rC), _) = emptyCells !! randomCell
-    boardR = replace board rR (replace (board !! rR) rC ((rR, rC), ("obstacle", False, False)))
 
 get4AdyacentCells :: Position -> Board -> [PositionBoardCell]
 get4AdyacentCells (r, c) board = result
@@ -107,12 +97,12 @@ addCorralsBoard seed amount board
   where
     corralsAlready = boardCellTypeEncounter "corral" board
 
-addChildBoard :: Int -> Int -> Board -> Board
-addChildBoard seed amount board
+addGenericBoard :: Int -> CellType -> Int -> Board -> Board
+addGenericBoard seed cellType amount board
   | amount == 0 = board
   | otherwise =
     let emptyCells = boardCellTypeEncounter "empty" board
         randomCell = randomRange 0 (length emptyCells - 1) (runRandom rand seed)
         ((rR, rC), _) = emptyCells !! randomCell
-        boardR = replace board rR (replace (board !! rR) rC ((rR, rC), ("child", False, False)))
-     in addChildBoard rR (amount - 1) boardR
+        boardR = replace board rR (replace (board !! rR) rC ((rR, rC), (cellType, False, False)))
+     in addGenericBoard rR cellType (amount - 1) boardR
