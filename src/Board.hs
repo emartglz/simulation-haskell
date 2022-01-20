@@ -87,14 +87,15 @@ get4CrossCells (r, c) board = result
 get8Cells :: Position -> Board -> [PositionBoardCell]
 get8Cells p board = get4AdyacentCells p board ++ get4CrossCells p board
 
-getFirstCellLine :: Position -> Position -> Position -> CellType -> Board -> PositionBoardCell
-getFirstCellLine positionIni position direction cellType board =
+getFirstCellLine :: Position -> Position -> Position -> CellType -> CellType -> Board -> PositionBoardCell
+getFirstCellLine positionIni position direction cellTypeObjetive cellTypeObstacle board =
   let rows = length board
       columns = length (head board)
       result
         | getRow position < 0 || getRow position >= rows || getColumn position < 0 || getColumn position >= columns = board !! getRow positionIni !! getColumn positionIni
-        | getCellType (getBoardCell (board !! getRow position !! getColumn position)) == cellType = board !! getRow position !! getColumn position
-        | otherwise = getFirstCellLine positionIni (getRow position + getRow direction, getColumn position + getColumn direction) direction cellType board
+        | getCellType (getBoardCell (board !! getRow position !! getColumn position)) == cellTypeObjetive = board !! getRow position !! getColumn position
+        | getCellType (getBoardCell (board !! getRow position !! getColumn position)) == cellTypeObstacle = getFirstCellLine positionIni (getRow position + getRow direction, getColumn position + getColumn direction) direction cellTypeObjetive cellTypeObstacle board
+        | otherwise = board !! getRow positionIni !! getColumn positionIni
    in result
 
 filterByTypeCell :: CellType -> [PositionBoardCell] -> [PositionBoardCell]

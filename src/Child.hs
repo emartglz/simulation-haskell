@@ -19,7 +19,7 @@ moveChildsList seed moveProbability ((p, cell) : xs) board =
               boardRR
                 | getCellType (getBoardCell cellDestiny) == "empty" || getCellType (getBoardCell cellDestiny) == "obstacle" =
                   let direction = (getRow (getPosition cellDestiny) - getRow p, getColumn (getPosition cellDestiny) - getColumn p)
-                      destinySwap = getFirstCellLine p p direction "empty" board
+                      destinySwap = getFirstCellLine p p direction "empty" "obstacle" board
                    in swapPosition p (getPosition cellDestiny) (swapPosition (getPosition cellDestiny) (getPosition destinySwap) board)
                 | otherwise = board
            in boardRR
