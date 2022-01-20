@@ -1,7 +1,17 @@
-module Utils (replace, getPosition, getBoardCell, getRow, getColumn, getCellType) where
+module Utils (replace, getPosition, getBoardCell, getRow, getColumn, getCellType, replaceInBoard, swapPosition) where
 
 replace :: [a] -> Int -> a -> [a]
 replace list index element = let (first, x : xs) = splitAt index list in first ++ (element : xs)
+
+replaceInBoard :: ((Int, Int), (String, Bool, Bool)) -> [[((Int, Int), (String, Bool, Bool))]] -> [[((Int, Int), (String, Bool, Bool))]]
+replaceInBoard ((r, c), x) board = replace board r (replace (board !! r) c ((r, c), x))
+
+swapPosition :: (Int, Int) -> (Int, Int) -> [[((Int, Int), (String, Bool, Bool))]] -> [[((Int, Int), (String, Bool, Bool))]]
+swapPosition (originR, originC) (destinyR, destinyC) board =
+  replaceInBoard ((originR, originC), y) (replaceInBoard ((destinyR, destinyC), x) board)
+  where
+    x = getBoardCell (board !! originR !! originC)
+    y = getBoardCell (board !! destinyR !! destinyC)
 
 getPosition :: (p, c) -> p
 getPosition (p, c) = p
