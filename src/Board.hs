@@ -1,4 +1,4 @@
-module Board (board, addCorralsBoard, addGenericBoard, filterByTypeCell) where
+module Board (Board, PositionBoardCell, board, addCorralsBoard, addGenericBoard, filterByTypeCell, get4AdyacentCells, boardCellTypeEncounter, getFirstCellLine) where
 
 import Random
 import Utils
@@ -64,6 +64,38 @@ get4AdyacentCells (r, c) board = result
       | c == (columns - 1) = []
       | otherwise = [board !! r !! (c + 1)]
     result = up ++ down ++ left ++ right
+
+get4CrossCells :: Position -> Board -> [PositionBoardCell]
+get4CrossCells (r, c) board = result
+  where
+    rows = length board
+    columns = length (head board)
+    upLeft
+      | r == 0 || c == 0 = []
+      | otherwise = [board !! (r - 1) !! (c - 1)]
+    downLeft
+      | r == (rows - 1) || c == 0 = []
+      | otherwise = [board !! (r + 1) !! (c - 1)]
+    upRight
+      | r == 0 || c == (columns - 1) = []
+      | otherwise = [board !! (r - 1) !! (c + 1)]
+    downRight
+      | r == (rows - 1) || c == (columns - 1) = []
+      | otherwise = [board !! (r + 1) !! (c + 1)]
+    result = upLeft ++ downLeft ++ upRight ++ downRight
+
+get8Cells :: Position -> Board -> [PositionBoardCell]
+get8Cells p board = get4AdyacentCells p board ++ get4CrossCells p board
+
+getFirstCellLine :: Position -> Position -> Position -> CellType -> Board -> PositionBoardCell
+getFirstCellLine positionIni position direction cellType board =
+  let rows = length board
+      columns = length (head board)
+      result
+        | getRow position < 0 || getRow position >= rows || getColumn position < 0 || getColumn position >= columns = board !! getRow positionIni !! getColumn positionIni
+        | getCellType (getBoardCell (board !! getRow position !! getColumn position)) == cellType = board !! getRow position !! getColumn position
+        | otherwise = getFirstCellLine positionIni position direction cellType board
+   in result
 
 filterByTypeCell :: CellType -> [PositionBoardCell] -> [PositionBoardCell]
 filterByTypeCell _ [] = []
