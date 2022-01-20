@@ -94,7 +94,7 @@ getFirstCellLine positionIni position direction cellType board =
       result
         | getRow position < 0 || getRow position >= rows || getColumn position < 0 || getColumn position >= columns = board !! getRow positionIni !! getColumn positionIni
         | getCellType (getBoardCell (board !! getRow position !! getColumn position)) == cellType = board !! getRow position !! getColumn position
-        | otherwise = getFirstCellLine positionIni position direction cellType board
+        | otherwise = getFirstCellLine positionIni (getRow position + getRow direction, getColumn position + getColumn direction) direction cellType board
    in result
 
 filterByTypeCell :: CellType -> [PositionBoardCell] -> [PositionBoardCell]
