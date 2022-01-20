@@ -25,6 +25,7 @@ library
     exposed-modules:  
         Board,
         Utils,
+        Child,
         Random
 
     -- Modules included in this library but not exported.

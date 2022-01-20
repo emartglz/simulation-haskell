@@ -2,6 +2,7 @@ module Main where
 
 -- import Brick
 import Board
+import Child
 import System.Random
 
 -- ui :: Widget ()
@@ -40,4 +41,9 @@ main = do
   let boardWithObstacles = addGenericBoard (seed + 1) "obstacle" obstacles boardWithCorrals
   let boardWithChild = addGenericBoard (seed + 2) "child" kids boardWithObstacles
   let boardWithRobot = addGenericBoard (seed + 3) "robot" robots boardWithChild
+
+  let childMoveProbability = 1 / 7
   print boardWithRobot
+
+  let boardWithChildMoved = moveChilds (seed + 4) childMoveProbability boardWithRobot
+  print boardWithChildMoved
