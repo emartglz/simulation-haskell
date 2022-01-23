@@ -1,4 +1,4 @@
-module Board (Board, PositionBoardCell, board, addCorralsBoard, addGenericBoard, filterByTypeCell, get4AdyacentCells, boardCellTypeEncounter, getFirstCellLine) where
+module Board (Board, Position, PositionBoardCell, board, addCorralsBoard, addGenericBoard, filterByTypeCell, get4AdyacentCells, boardCellTypeEncounter, getFirstCellLine, get9Cells) where
 
 import Random
 import Utils
@@ -86,6 +86,9 @@ get4CrossCells (r, c) board = result
 
 get8Cells :: Position -> Board -> [PositionBoardCell]
 get8Cells p board = get4AdyacentCells p board ++ get4CrossCells p board
+
+get9Cells :: Position -> Board -> [PositionBoardCell]
+get9Cells p board = get8Cells p board ++ [board !! getRow p !! getColumn p]
 
 getFirstCellLine :: Position -> Position -> Position -> CellType -> CellType -> Board -> PositionBoardCell
 getFirstCellLine positionIni position direction cellTypeObjetive cellTypeObstacle board =

@@ -4,6 +4,7 @@ module Main where
 import Board
 import Child
 import System.Random
+import Utils
 
 -- ui :: Widget ()
 -- ui = str "Hello, world!"
@@ -42,8 +43,8 @@ main = do
   let boardWithChild = addGenericBoard (seed + 2) "child" kids boardWithObstacles
   let boardWithRobot = addGenericBoard (seed + 3) "robot" robots boardWithChild
 
-  let childMoveProbability = 1 / 7
-  print boardWithRobot
+  let childMoveProbability = 1 / 2
+  let trashProbability = 1 / 2
 
-  let boardWithChildMoved = moveChilds (seed + 4) childMoveProbability boardWithRobot
-  print boardWithChildMoved
+  let boardWithChildMoved = moveChilds (seed + 4) childMoveProbability trashProbability bbbb
+  printBoard boardWithChildMoved
