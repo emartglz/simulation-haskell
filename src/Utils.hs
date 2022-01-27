@@ -1,4 +1,4 @@
-module Utils (replace, getPosition, getBoardCell, getRow, getColumn, getCellType, replaceInBoard, swapPosition, printBoard, isMember, replaceInBoardList) where
+module Utils (replace, getPosition, getBoardCell, getRow, getColumn, getCellType, replaceInBoard, swapPosition, printBoard, isMember, replaceInBoardList, getDrop) where
 
 replace :: [a] -> Int -> a -> [a]
 replace list index element = let (first, x : xs) = splitAt index list in first ++ (element : xs)
@@ -26,6 +26,9 @@ getBoardCell (p, c) = c
 getCellType :: (String, Bool, Bool) -> String
 getCellType (c, p, d) = c
 
+getDrop :: (String, Bool, Bool) -> Bool
+getDrop (_, _, d) = d
+
 getRow :: (Int, Int) -> Int
 getRow (r, c) = r
 
@@ -51,6 +54,7 @@ printColumn ((_, (c, _, _)) : xs) = do
             | c == "obstacle" = "x"
             | c == "robot-trash" = "T"
             | c == "robot-child" = "C"
+            | c == "robot-child-corral" = "H"
             | otherwise = ""
        in p
     )

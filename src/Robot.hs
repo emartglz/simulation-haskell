@@ -13,7 +13,7 @@ maxConstant = 9999999
 moveRobots :: Board -> Board
 moveRobots board =
   let boardRobot = moveRobotsList (boardCellTypeEncounter "robot" board) board
-      boardRobotCorral = moveRobotsCorralList (boardCellTypeEncounter "robot-corral" board) boardRobot
+      boardRobotCorral = moveRobotsList (boardCellTypeEncounter "robot-corral" board) boardRobot
       boardRobotChild = moveRobotsChildList (boardCellTypeEncounter "robot-child" board) boardRobotCorral
       boardRobotChildCorral = moveRobotsChildCorralList (boardCellTypeEncounter "robot-child-corral" board) boardRobotChild
       boardRobotTrash = moveRobotsTrashList (boardCellTypeEncounter "robot-trash" board) boardRobotChildCorral
@@ -23,14 +23,14 @@ moveRobots board =
 moveRobotsList :: [PositionBoardCell] -> Board -> Board
 moveRobotsList [] board = board
 moveRobotsList ((p, c) : xs) board =
-  let dboard = generateDistanceTable p ["child", "trash"] ["robot", "robot-corral", "robot-child-corral", "child", "robot-child", "robot-trash", "obstacle"] board
+  let dboard = generateDistanceTable p ["child", "trash"] ["robot", "robot-corral", "robot-child-corral", "child", "robot-child", "robot-trash", "obstacle", "robot-child-trash"] board
       childs = boardCellTypeEncounter "child" board
       trash = boardCellTypeEncounter "trash" board
       boardR =
         if null childs
           then
             if null trash
-              then board --wont move
+              then board --dont move
               else
                 let trashPositions = map getPosition trash
                     (trashWithLowerDistance, trashDistance) = calculateLowerDistanceList (head trashPositions) trashPositions dboard maxConstant
@@ -45,7 +45,17 @@ moveRobotsList ((p, c) : xs) board =
             let childsPositions = map getPosition childs
                 (childWithLowerDistance, childDistance) = calculateLowerDistanceList (head childsPositions) childsPositions dboard maxConstant
              in if childDistance == maxConstant
-                  then board --cant reach child
+                  then --cant reach child, search for trash
+
+                    let trashPositions = map getPosition trash
+                        (trashWithLowerDistance, trashDistance) = calculateLowerDistanceList (head trashPositions) trashPositions dboard maxConstant
+                     in if trashDistance == maxConstant
+                          then board --cant reach trash
+                          else
+                            let path = getPathFromDistance trashWithLowerDistance dboard []
+                                (rDestiny, cDestiny) = walkNCells 1 path
+                                (start, finish) = typeOfCellChange (p, c) (board !! rDestiny !! cDestiny)
+                             in replaceInBoardList [start, finish] board
                   else
                     let path = getPathFromDistance childWithLowerDistance dboard []
                         (rDestiny, cDestiny) = walkNCells 1 path
@@ -53,11 +63,25 @@ moveRobotsList ((p, c) : xs) board =
                      in replaceInBoardList [start, finish] board
    in moveRobotsList xs boardR
 
-moveRobotsCorralList :: [PositionBoardCell] -> Board -> Board
-moveRobotsCorralList _ board = board
-
 moveRobotsChildList :: [PositionBoardCell] -> Board -> Board
-moveRobotsChildList _ board = board
+moveRobotsChildList [] board = board
+moveRobotsChildList ((p, c) : xs) board =
+  let dboard = generateDistanceTable p [corralConstant] ["robot", "robot-corral", "robot-child-corral", "child", "robot-child", "robot-trash", "obstacle", "robot-child-trash"] board
+      corrals = boardCellTypeEncounter corralConstant board
+      boardR =
+        if null corrals
+          then board --dont move
+          else
+            let corralsPositions = map getPosition corrals
+                (corralWithLowerDistance, corralDistance) = calculateLowerDistanceList (head corralsPositions) corralsPositions dboard maxConstant
+             in if corralDistance == maxConstant
+                  then board --cant reach corral, just hold child forever FIX THIS
+                  else
+                    let path = getPathFromDistance corralWithLowerDistance dboard []
+                        (rDestiny, cDestiny) = walkNCells 2 path
+                        (start, finish) = typeOfCellChange (p, c) (board !! rDestiny !! cDestiny)
+                     in replaceInBoardList [start, finish] board
+   in moveRobotsChildList xs boardR
 
 moveRobotsChildCorralList :: [PositionBoardCell] -> Board -> Board
 moveRobotsChildCorralList _ board = board
@@ -126,14 +150,14 @@ getPathFromDistance :: Position -> DistanceBoard -> [Position] -> [Position]
 getPathFromDistance (r, c) dboard path
   | getBoardCell (dboard !! r !! c) == 0 = path
   | otherwise =
-    let pathR = path ++ [(r, c)]
+    let pathR = (r, c) : path
         adyacents = get4AdyacentCells (r, c) dboard
         (d, pR) = minimum (map (\(p, x) -> (x, p)) adyacents)
      in getPathFromDistance pR dboard pathR
 
 walkNCells :: Int -> [Position] -> Position
 walkNCells steps path
-  | steps < length path = path !! (length path - 1)
+  | steps > length path = path !! (length path - 1)
   | otherwise = path !! (steps - 1)
 
 typeOfCellChange :: PositionBoardCell -> PositionBoardCell -> (PositionBoardCell, PositionBoardCell)
@@ -161,6 +185,10 @@ typeOfCellChange start finish
   | ini == robotChildTrashConstant && end == emptyConstant = ((pini, (trashConstant, False, False)), (pend, (robotChildConstant, False, False)))
   | ini == robotChildTrashConstant && end == trashConstant = ((pini, (trashConstant, False, False)), (pend, (robotChildTrashConstant, False, False)))
   | ini == robotChildTrashConstant && end == corralConstant = ((pini, (trashConstant, False, False)), (pend, (robotChildCorralConstant, False, False)))
+  --robot-child-corral drop
+  | drop && ini == robotChildCorralConstant && end == emptyConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotConstant, False, False)))
+  | drop && ini == robotChildCorralConstant && end == trashConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotTrashConstant, False, False)))
+  | drop && ini == robotChildCorralConstant && end == corralConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotCorralConstant, False, False)))
   --robot-child-corral
   | ini == robotChildCorralConstant && end == emptyConstant = ((pini, (corralConstant, False, False)), (pend, (robotChildConstant, False, False)))
   | ini == robotChildCorralConstant && end == trashConstant = ((pini, (corralConstant, False, False)), (pend, (robotChildTrashConstant, False, False)))
@@ -169,6 +197,7 @@ typeOfCellChange start finish
   | otherwise = (start, finish)
   where
     ini = getCellType (getBoardCell start)
+    drop = getDrop (getBoardCell start)
     end = getCellType (getBoardCell finish)
     pini = getPosition start
     pend = getPosition finish

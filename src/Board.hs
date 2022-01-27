@@ -22,6 +22,7 @@ module Board
     robotChildCorralConstant,
     robotTrashConstant,
     robotChildTrashConstant,
+    childCorralConstant,
   )
 where
 
@@ -51,6 +52,8 @@ robotChildCorralConstant = "robot-child-corral"
 robotTrashConstant = "robot-trash"
 
 robotChildTrashConstant = "robot-child-trash"
+
+childCorralConstant = "child-corral"
 
 type Pick = Bool
 
