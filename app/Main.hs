@@ -7,12 +7,6 @@ import Robot
 import System.Random
 import Utils
 
--- ui :: Widget ()
--- ui = str "Hello, world!"
-
--- main :: IO ()
--- main = simpleMain ui
-
 main :: IO ()
 main = do
   putStrLn "enter value for rows: "
@@ -52,11 +46,11 @@ main = do
 loop :: Int -> Board -> Float -> Float -> IO ()
 loop seed board childMoveProbability trashProbability = do
   let boardWithChildMoved = moveChilds seed childMoveProbability trashProbability board
-  -- let boardWithRobotMoved = moveRobots boardWithChildMoved
-  printBoard boardWithChildMoved
+  let boardWithRobotMoved = moveRobots boardWithChildMoved
+  printBoard boardWithRobotMoved
 
   putStrLn "press Enter"
   input1 <- getLine
   let r = (read input1 :: Int)
 
-  loop (seed + 1) boardWithChildMoved childMoveProbability trashProbability
+  loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
