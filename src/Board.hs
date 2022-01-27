@@ -1,4 +1,4 @@
-module Board (Board, Position, PositionBoardCell, board, addCorralsBoard, addGenericBoard, filterByTypeCell, get4AdyacentCells, boardCellTypeEncounter, getFirstCellLine, get9Cells) where
+module Board (Board, Position, CellType, PositionBoardCell, board, addCorralsBoard, addGenericBoard, filterByTypeCell, get4AdyacentCells, boardCellTypeEncounter, getFirstCellLine, get9Cells) where
 
 import Random
 import Utils
@@ -46,7 +46,7 @@ boardCellTypeEncounterColmn cellType board r c cEnd
   | getCellType (getBoardCell (board !! r !! c)) == cellType = (board !! r !! c) : boardCellTypeEncounterColmn cellType board r (c + 1) cEnd
   | otherwise = boardCellTypeEncounterColmn cellType board r (c + 1) cEnd
 
-get4AdyacentCells :: Position -> Board -> [PositionBoardCell]
+get4AdyacentCells :: Position -> [[(Position, a)]] -> [(Position, a)]
 get4AdyacentCells (r, c) board = result
   where
     rows = length board

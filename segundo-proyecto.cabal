@@ -26,6 +26,7 @@ library
         Board,
         Utils,
         Child,
+        Robot,
         Random
 
     -- Modules included in this library but not exported.
@@ -50,7 +51,6 @@ executable segundo-proyecto
     -- other-extensions:
     build-depends:
         base ^>=4.14.3.0,
-        brick >= 0.65,
         random,
         segundo-proyecto
     ghc-options:

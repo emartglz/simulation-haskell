@@ -3,6 +3,7 @@ module Main where
 -- import Brick
 import Board
 import Child
+import Robot
 import System.Random
 import Utils
 
@@ -46,5 +47,16 @@ main = do
   let childMoveProbability = 1 / 2
   let trashProbability = 1 / 2
 
-  let boardWithChildMoved = moveChilds (seed + 4) childMoveProbability trashProbability bbbb
+  loop (seed + 4) boardWithRobot childMoveProbability trashProbability
+
+loop :: Int -> Board -> Float -> Float -> IO ()
+loop seed board childMoveProbability trashProbability = do
+  let boardWithChildMoved = moveChilds seed childMoveProbability trashProbability board
+  -- let boardWithRobotMoved = moveRobots boardWithChildMoved
   printBoard boardWithChildMoved
+
+  putStrLn "press Enter"
+  input1 <- getLine
+  let r = (read input1 :: Int)
+
+  loop (seed + 1) boardWithChildMoved childMoveProbability trashProbability

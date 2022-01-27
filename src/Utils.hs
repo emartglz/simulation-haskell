@@ -1,10 +1,14 @@
-module Utils (replace, getPosition, getBoardCell, getRow, getColumn, getCellType, replaceInBoard, swapPosition, printBoard) where
+module Utils (replace, getPosition, getBoardCell, getRow, getColumn, getCellType, replaceInBoard, swapPosition, printBoard, isMember, replaceInBoardList) where
 
 replace :: [a] -> Int -> a -> [a]
 replace list index element = let (first, x : xs) = splitAt index list in first ++ (element : xs)
 
-replaceInBoard :: ((Int, Int), (String, Bool, Bool)) -> [[((Int, Int), (String, Bool, Bool))]] -> [[((Int, Int), (String, Bool, Bool))]]
+replaceInBoard :: ((Int, Int), a) -> [[((Int, Int), a)]] -> [[((Int, Int), a)]]
 replaceInBoard ((r, c), x) board = replace board r (replace (board !! r) c ((r, c), x))
+
+replaceInBoardList :: [((Int, Int), a)] -> [[((Int, Int), a)]] -> [[((Int, Int), a)]]
+replaceInBoardList [] board = board
+replaceInBoardList (((r, c), x) : xs) board = replaceInBoardList xs (replace board r (replace (board !! r) c ((r, c), x)))
 
 swapPosition :: (Int, Int) -> (Int, Int) -> [[((Int, Int), (String, Bool, Bool))]] -> [[((Int, Int), (String, Bool, Bool))]]
 swapPosition (originR, originC) (destinyR, destinyC) board =
@@ -29,7 +33,31 @@ getColumn :: (Int, Int) -> Int
 getColumn (r, c) = c
 
 printBoard :: [[((Int, Int), (String, Bool, Bool))]] -> IO ()
-printBoard [] = print ""
+printBoard [] = putStr "\n"
 printBoard (x : xs) = do
-  print x
+  printColumn x
   printBoard xs
+
+printColumn :: [((Int, Int), (String, Bool, Bool))] -> IO ()
+printColumn [] = putStr "\n"
+printColumn ((_, (c, _, _)) : xs) = do
+  putStr
+    ( let p
+            | c == "robot" = "r"
+            | c == "child" = "c"
+            | c == "trash" = "t"
+            | c == "corral" = "h"
+            | c == "empty" = "."
+            | c == "obstacle" = "x"
+            | c == "robot-trash" = "T"
+            | c == "robot-child" = "C"
+            | otherwise = ""
+       in p
+    )
+  printColumn xs
+
+isMember :: Eq t => t -> [t] -> Bool
+isMember n [] = False
+isMember n (x : xs)
+  | n == x = True
+  | otherwise = isMember n xs
