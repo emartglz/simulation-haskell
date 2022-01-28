@@ -46,15 +46,16 @@ printColumn [] = putStr "\n"
 printColumn ((_, (c, _, _)) : xs) = do
   putStr
     ( let p
-            | c == "robot" = "r"
-            | c == "child" = "c"
-            | c == "trash" = "t"
-            | c == "corral" = "h"
-            | c == "empty" = "."
-            | c == "obstacle" = "x"
-            | c == "robot-trash" = "T"
-            | c == "robot-child" = "C"
-            | c == "robot-child-corral" = "H"
+            | c == "robot" = "[ R ]"
+            | c == "child" = "[ C ]"
+            | c == "trash" = "[ T ]"
+            | c == "corral" = "[ H ]"
+            | c == "empty" = "[   ]"
+            | c == "obstacle" = "[ X ]"
+            | c == "robot-trash" = "[RT ]"
+            | c == "robot-child" = "[RC ]"
+            | c == "robot-child-corral" = "[RCH]"
+            | c == "robot-child-trash" = "[RCT]"
             | otherwise = ""
        in p
     )
