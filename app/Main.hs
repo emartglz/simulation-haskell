@@ -29,6 +29,10 @@ main = do
   input5 <- getLine
   let robots = (read input5 :: Int)
 
+  putStrLn "enter value for trash: "
+  input6 <- getLine
+  let trash = (read input6 :: Int)
+
   let boardEmpty = board r c
 
   g <- newStdGen
@@ -37,11 +41,12 @@ main = do
   let boardWithObstacles = addGenericBoard (seed + 1) "obstacle" obstacles boardWithCorrals
   let boardWithChild = addGenericBoard (seed + 2) "child" kids boardWithObstacles
   let boardWithRobot = addGenericBoard (seed + 3) "robot" robots boardWithChild
+  let boardWithTrash = addGenericBoard (seed + 4) "trash" trash boardWithRobot
 
   let childMoveProbability = 1 / 2
   let trashProbability = 1 / 2
 
-  loop (seed + 4) boardWithRobot childMoveProbability trashProbability
+  loop (seed + 5) boardWithTrash childMoveProbability trashProbability
 
 loop :: Int -> Board -> Float -> Float -> IO ()
 loop seed board childMoveProbability trashProbability = do
@@ -49,8 +54,25 @@ loop seed board childMoveProbability trashProbability = do
   let boardWithRobotMoved = moveRobots boardWithChildMoved
   printBoard boardWithRobotMoved
 
-  putStrLn "press Enter"
-  input1 <- getLine
-  let r = (read input1 :: Int)
+  let trashAmount =
+        length (boardCellTypeEncounter trashConstant boardWithRobotMoved)
+          + length (boardCellTypeEncounter robotTrashConstant boardWithRobotMoved)
+          + length (boardCellTypeEncounter robotChildTrashConstant boardWithRobotMoved)
+
+  let trasheblesCells =
+        trashAmount
+          + length (boardCellTypeEncounter robotConstant boardWithRobotMoved)
+          + length (boardCellTypeEncounter robotChildConstant boardWithRobotMoved)
+          + length (boardCellTypeEncounter childConstant boardWithRobotMoved)
+
+  let cleanCells = trasheblesCells - trashAmount
+
+  putStrLn "enter value for trash: "
+  input6 <- getLine
+  let trash = (read input6 :: Int)
 
   loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
+
+-- if cleanCells * 100 < trasheblesCells * 60
+--   then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
+--   else print "End simulation"

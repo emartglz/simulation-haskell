@@ -14,9 +14,9 @@ moveRobots :: Board -> Board
 moveRobots board =
   let boardRobot = moveRobotsList (boardCellTypeEncounter "robot" board) board
       boardRobotCorral = moveRobotsList (boardCellTypeEncounter "robot-corral" board) boardRobot
-      boardRobotChildCorralDrop = moveRobotsList (boardCellTypeEncounter "robot-child-orral" board) boardRobotCorral
+      boardRobotChildCorralDrop = moveRobotsList (boardCellTypeEncounter robotChildCorralConstant board) boardRobotCorral
       boardRobotChild = moveRobotsChildList (boardCellTypeEncounter "robot-child" board) boardRobotChildCorralDrop
-      boardRobotChildCorral = moveRobotsChildCorralList (boardCellTypeEncounter "robot-child-corral" board) boardRobotChild
+      boardRobotChildCorral = moveRobotsChildCorralList (boardCellTypeEncounter robotChildCorralConstant board) boardRobotChild
       boardRobotTrash = moveRobotsTrashList (boardCellTypeEncounter "robot-trash" board) boardRobotChildCorral
       boardRobotChildTrash = moveRobotsChildList (boardCellTypeEncounter "robot-child-trash" board) boardRobotTrash
    in boardRobotChildTrash
