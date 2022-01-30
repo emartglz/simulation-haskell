@@ -9,6 +9,10 @@ import Utils
 
 main :: IO ()
 main = do
+  putStrLn "enter value for t: "
+  input0 <- getLine
+  let t = (read input0 :: Int)
+
   putStrLn "enter value for rows: "
   input1 <- getLine
   let r = (read input1 :: Int)
@@ -45,15 +49,18 @@ main = do
 
   let childMoveProbability = 1 / 2
   let trashProbability = 1 / 2
+  let turn = 1
 
   printBoard boardWithTrash
 
-  loop (seed + 5) boardWithTrash childMoveProbability trashProbability
+  loop (seed + 5) boardWithTrash childMoveProbability trashProbability turn t
 
-loop :: Int -> Board -> Float -> Float -> IO ()
-loop seed board childMoveProbability trashProbability = do
-  let boardWithChildMoved = moveChilds seed childMoveProbability trashProbability board
+loop :: Int -> Board -> Float -> Float -> Int -> Int -> IO ()
+loop seed board childMoveProbability trashProbability turn t = do
+  let boardWithChildMoved = if mod turn t == 0 then moveChilds seed childMoveProbability trashProbability board else board
   let boardWithRobotMoved = moveRobots boardWithChildMoved
+
+  putStr ("Turn: " ++ show turn ++ "\n")
   printBoard boardWithRobotMoved
 
   let trashAmount =
@@ -66,9 +73,10 @@ loop seed board childMoveProbability trashProbability = do
           + length (boardCellTypeEncounter robotConstant boardWithRobotMoved)
           + length (boardCellTypeEncounter robotChildConstant boardWithRobotMoved)
           + length (boardCellTypeEncounter childConstant boardWithRobotMoved)
+          + length (boardCellTypeEncounter emptyConstant boardWithRobotMoved)
 
   let cleanCells = trasheblesCells - trashAmount
 
   if cleanCells * 100 < trasheblesCells * 60
-    then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
-    else print "End simulation"
+    then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability (turn + 1) t
+    else putStrLn "Simulation finished"

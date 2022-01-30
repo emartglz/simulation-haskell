@@ -41,7 +41,7 @@ moveRobotsList ((p, (c, pick, drop)) : xs) board =
                     let trashPositions = map getPosition trash
                         (trashWithLowerDistance, trashDistance) = calculateLowerDistanceList (head trashPositions) trashPositions dboard maxConstant
                      in if trashDistance == maxConstant
-                          then board --cant reach trash
+                          then board --cant reach trash, dont move
                           else
                             let path = getPathFromDistance trashWithLowerDistance dboard []
                                 (rDestiny, cDestiny) = walkNCells 1 path
@@ -56,7 +56,7 @@ moveRobotsList ((p, (c, pick, drop)) : xs) board =
                         let trashPositions = map getPosition trash
                             (trashWithLowerDistance, trashDistance) = calculateLowerDistanceList (head trashPositions) trashPositions dboard maxConstant
                          in if trashDistance == maxConstant
-                              then board --cant reach trash
+                              then board --cant reach trash, dont move
                               else
                                 let path = getPathFromDistance trashWithLowerDistance dboard []
                                     (rDestiny, cDestiny) = walkNCells 1 path
