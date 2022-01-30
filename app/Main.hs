@@ -1,6 +1,5 @@
 module Main where
 
--- import Brick
 import Board
 import Child
 import Robot
