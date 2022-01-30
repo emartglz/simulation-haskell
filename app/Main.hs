@@ -67,12 +67,6 @@ loop seed board childMoveProbability trashProbability = do
 
   let cleanCells = trasheblesCells - trashAmount
 
-  putStrLn "enter value for trash: "
-  input6 <- getLine
-  let trash = (read input6 :: Int)
-
-  loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
-
--- if cleanCells * 100 < trasheblesCells * 60
---   then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
---   else print "End simulation"
+  if cleanCells * 100 < trasheblesCells * 60
+    then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability
+    else print "End simulation"

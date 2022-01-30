@@ -10,15 +10,17 @@ type DistanceBoard = [[PositionDistanceCell]]
 
 maxConstant = 9999999
 
+cantPass = [robotConstant, robotChildConstant, robotChildCorralConstant, robotTrashConstant, robotChildTrashConstant, robotCorralConstant, childConstant, childCorralConstant, obstacleConstant]
+
 moveRobots :: Board -> Board
 moveRobots board =
-  let boardRobot = moveRobotsList (boardCellTypeEncounter "robot" board) board
-      boardRobotCorral = moveRobotsList (boardCellTypeEncounter "robot-corral" board) boardRobot
+  let boardRobot = moveRobotsList (boardCellTypeEncounter robotConstant board) board
+      boardRobotCorral = moveRobotsList (boardCellTypeEncounter robotCorralConstant board) boardRobot
       boardRobotChildCorralDrop = moveRobotsList (boardCellTypeEncounter robotChildCorralConstant board) boardRobotCorral
-      boardRobotChild = moveRobotsChildList (boardCellTypeEncounter "robot-child" board) boardRobotChildCorralDrop
+      boardRobotChild = moveRobotsChildList (boardCellTypeEncounter robotChildConstant board) boardRobotChildCorralDrop
       boardRobotChildCorral = moveRobotsChildCorralList (boardCellTypeEncounter robotChildCorralConstant board) boardRobotChild
-      boardRobotTrash = moveRobotsTrashList (boardCellTypeEncounter "robot-trash" board) boardRobotChildCorral
-      boardRobotChildTrash = moveRobotsChildList (boardCellTypeEncounter "robot-child-trash" board) boardRobotTrash
+      boardRobotTrash = moveRobotsTrashList (boardCellTypeEncounter robotTrashConstant board) boardRobotChildCorral
+      boardRobotChildTrash = moveRobotsChildList (boardCellTypeEncounter robotChildTrashConstant board) boardRobotTrash
    in boardRobotChildTrash
 
 moveRobotsList :: [PositionBoardCell] -> Board -> Board
@@ -27,7 +29,7 @@ moveRobotsList ((p, (c, pick, drop)) : xs) board =
   if c == robotChildCorralConstant && not drop
     then moveRobotsList xs board
     else
-      let dboard = generateDistanceTable p ["child", "trash"] ["robot", "robot-corral", "robot-child-corral", "child", "robot-child", "robot-trash", "obstacle", "robot-child-trash"] board
+      let dboard = generateDistanceTable p [childConstant, trashConstant] cantPass board
           childs = boardCellTypeEncounter "child" board
           trash = boardCellTypeEncounter "trash" board
           boardR =
@@ -70,7 +72,7 @@ moveRobotsList ((p, (c, pick, drop)) : xs) board =
 moveRobotsChildList :: [PositionBoardCell] -> Board -> Board
 moveRobotsChildList [] board = board
 moveRobotsChildList ((p, c) : xs) board =
-  let dboard = generateDistanceTable p [corralConstant] ["robot", "robot-corral", "robot-child-corral", "child", "robot-child", "robot-trash", "obstacle", "robot-child-trash"] board
+  let dboard = generateDistanceTable p [corralConstant] cantPass board
       corrals = boardCellTypeEncounter corralConstant board
       boardR =
         if null corrals

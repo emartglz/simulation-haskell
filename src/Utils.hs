@@ -54,6 +54,7 @@ printColumn ((_, (c, _, _)) : xs) = do
             | c == "obstacle" = "[ X ]"
             | c == "robot-trash" = "[RT ]"
             | c == "robot-child" = "[RC ]"
+            | c == "robot-corral" = "[RH ]"
             | c == "child-corral" = "[CH ]"
             | c == "robot-child-corral" = "[RCH]"
             | c == "robot-child-trash" = "[RCT]"
