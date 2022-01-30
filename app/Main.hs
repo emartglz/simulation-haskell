@@ -46,6 +46,8 @@ main = do
   let childMoveProbability = 1 / 2
   let trashProbability = 1 / 2
 
+  printBoard boardWithTrash
+
   loop (seed + 5) boardWithTrash childMoveProbability trashProbability
 
 loop :: Int -> Board -> Float -> Float -> IO ()
