@@ -193,6 +193,7 @@ typeOfCellChange start finish
   | ini == robotChildTrashConstant && end == corralConstant = ((pini, (trashConstant, False, False)), (pend, (robotChildCorralConstant, False, False)))
   --robot-child-corral drop
   | drop && ini == robotChildCorralConstant && end == emptyConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotConstant, False, False)))
+  | drop && ini == robotChildCorralConstant && end == childConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotChildConstant, True, False)))
   | drop && ini == robotChildCorralConstant && end == trashConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotTrashConstant, False, False)))
   | drop && ini == robotChildCorralConstant && end == corralConstant = ((pini, (childCorralConstant, False, False)), (pend, (robotCorralConstant, False, False)))
   --robot-child-corral
