@@ -28,13 +28,17 @@ main = do
   input4 <- getLine
   let kids = (read input4 :: Int)
 
-  putStrLn "enter value for robots: "
-  input5 <- getLine
-  let robots = (read input5 :: Int)
-
   putStrLn "enter value for trash: "
+  input5 <- getLine
+  let trash = (read input5 :: Int)
+
+  putStrLn "enter value for robots: "
   input6 <- getLine
-  let trash = (read input6 :: Int)
+  let robots = (read input6 :: Int)
+
+  putStrLn "enter value for robots ia [1 prefer child, 2 prefer trash]: "
+  input7 <- getLine
+  let iaRobots = (read input7 :: Int)
 
   let boardEmpty = board r c
 
@@ -49,15 +53,16 @@ main = do
   let childMoveProbability = 1 / 2
   let trashProbability = 1 / 2
   let turn = 1
+  let max_loop = 1000
 
   printBoard boardWithTrash
 
-  loop (seed + 5) boardWithTrash childMoveProbability trashProbability turn t
+  loop (seed + 5) boardWithTrash childMoveProbability trashProbability turn t iaRobots max_loop
 
-loop :: Int -> Board -> Float -> Float -> Int -> Int -> IO ()
-loop seed board childMoveProbability trashProbability turn t = do
+loop :: Int -> Board -> Float -> Float -> Int -> Int -> Int -> Int -> IO ()
+loop seed board childMoveProbability trashProbability turn t iaRobots max_loop = do
   let boardWithChildMoved = if mod turn t == 0 then moveChilds seed childMoveProbability trashProbability board else board
-  let boardWithRobotMoved = moveRobots boardWithChildMoved
+  let boardWithRobotMoved = moveRobots boardWithChildMoved iaRobots
 
   putStr ("Turn: " ++ show turn ++ "\n")
   printBoard boardWithRobotMoved
@@ -76,6 +81,11 @@ loop seed board childMoveProbability trashProbability turn t = do
 
   let cleanCells = trasheblesCells - trashAmount
 
-  if cleanCells * 100 < trasheblesCells * 60
-    then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability (turn + 1) t
-    else putStrLn "Simulation finished"
+  let corrals = length (boardCellTypeEncounter corralConstant boardWithRobotMoved)
+
+  if (corrals /= 0 || cleanCells * 100 < trasheblesCells * 60) && turn < max_loop
+    then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability (turn + 1) t iaRobots max_loop
+    else
+      if turn == max_loop
+        then putStrLn "max_loop reached"
+        else putStr "room clean"
