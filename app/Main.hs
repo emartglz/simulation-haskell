@@ -83,7 +83,7 @@ loop seed board childMoveProbability trashProbability turn t iaRobots max_loop =
 
   let corrals = length (boardCellTypeEncounter corralConstant boardWithRobotMoved)
 
-  if (corrals /= 0 || cleanCells * 100 < trasheblesCells * 60) && turn < max_loop
+  if cleanCells * 100 < trasheblesCells * 60 && turn < max_loop
     then loop (seed + 1) boardWithRobotMoved childMoveProbability trashProbability (turn + 1) t iaRobots max_loop
     else
       if turn == max_loop
