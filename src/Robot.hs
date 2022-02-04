@@ -17,14 +17,17 @@ moveRobots board iaRobots =
   let boardRobot
         | iaRobots == 1 = moveRobotsList (boardCellTypeEncounter robotConstant board) board
         | iaRobots == 2 = moveRobotsListPrefferTrash (boardCellTypeEncounter robotConstant board) board
+        | iaRobots == 3 = moveRobotsListReactive (boardCellTypeEncounter robotConstant board) board
         | otherwise = board
       boardRobotCorral
         | iaRobots == 1 = moveRobotsList (boardCellTypeEncounter robotCorralConstant board) boardRobot
         | iaRobots == 2 = moveRobotsListPrefferTrash (boardCellTypeEncounter robotCorralConstant board) boardRobot
+        | iaRobots == 3 = moveRobotsListReactive (boardCellTypeEncounter robotCorralConstant board) boardRobot
         | otherwise = boardRobot
       boardRobotChildCorralDrop
         | iaRobots == 1 = moveRobotsList (boardCellTypeEncounter robotChildCorralConstant board) boardRobotCorral
         | iaRobots == 2 = moveRobotsListPrefferTrash (boardCellTypeEncounter robotChildCorralConstant board) boardRobotCorral
+        | iaRobots == 3 = moveRobotsListReactive (boardCellTypeEncounter robotChildCorralConstant board) boardRobotCorral
         | otherwise = boardRobotCorral
       boardRobotChild = moveRobotsChildList (boardCellTypeEncounter robotChildConstant board) boardRobotChildCorralDrop
       boardRobotChildCorral = moveRobotsChildCorralList (boardCellTypeEncounter robotChildCorralConstant board) boardRobotChild
@@ -123,6 +126,31 @@ moveRobotsListPrefferTrash ((p, (c, pick, drop)) : xs) board =
                             (start, finish) = typeOfCellChange (p, (c, pick, drop)) (board !! rDestiny !! cDestiny)
                          in replaceInBoardList [start, finish] board
        in moveRobotsListPrefferTrash xs boardR
+
+moveRobotsListReactive :: [PositionBoardCell] -> Board -> Board
+moveRobotsListReactive [] board = board
+moveRobotsListReactive ((p, (c, pick, drop)) : xs) board =
+  if c == robotChildCorralConstant && not drop
+    then moveRobotsListReactive xs board
+    else
+      let dboard = generateDistanceTable p [childConstant, trashConstant] cantPass board
+          childs = boardCellTypeEncounter "child" board
+          trash = boardCellTypeEncounter "trash" board
+          objectives = childs ++ trash
+          boardR =
+            if null objectives
+              then board -- dont move
+              else
+                let objectivesPositions = map getPosition objectives
+                    (objectivehWithLowerDistance, objectiveDistance) = calculateLowerDistanceList (head objectivesPositions) objectivesPositions dboard maxConstant
+                 in if objectiveDistance == maxConstant
+                      then board --cant reach objective, dont move
+                      else
+                        let path = getPathFromDistance objectivehWithLowerDistance dboard []
+                            (rDestiny, cDestiny) = walkNCells 1 path
+                            (start, finish) = typeOfCellChange (p, (c, pick, drop)) (board !! rDestiny !! cDestiny)
+                         in replaceInBoardList [start, finish] board
+       in moveRobotsListReactive xs boardR
 
 moveRobotsChildList :: [PositionBoardCell] -> Board -> Board
 moveRobotsChildList [] board = board
