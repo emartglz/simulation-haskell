@@ -86,9 +86,9 @@ def main():
         111,
     ]
 
-    plt.plot(t, a1, label="prefer child")
-    plt.plot(t, a2, label="prefer trash")
-    plt.plot(t, a3, label="prefer closer")
+    plt.plot(t, a1, label="prefiere los niños")
+    plt.plot(t, a2, label="prefiere la basura")
+    plt.plot(t, a3, label="prefiere el más cercano")
     plt.xlabel("T")
     plt.ylabel("turnos")
     plt.legend()
