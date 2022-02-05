@@ -11,39 +11,48 @@ main = do
   putStrLn "enter value for t: "
   input0 <- getLine
   let t = (read input0 :: Int)
+  -- let t = 25
 
   putStrLn "enter value for rows: "
   input1 <- getLine
   let r = (read input1 :: Int)
+  -- let r = 50
 
   putStrLn "enter value for columns: "
   input2 <- getLine
   let c = (read input2 :: Int)
+  -- let c = 50
 
   putStrLn "enter value for obstacles: "
   input3 <- getLine
   let obstacles = (read input3 :: Int)
+  -- let obstacles = 500
 
   putStrLn "enter value for kids: "
   input4 <- getLine
   let kids = (read input4 :: Int)
+  -- let kids = 100
 
   putStrLn "enter value for trash: "
   input5 <- getLine
   let trash = (read input5 :: Int)
+  -- let trash = 1500
 
   putStrLn "enter value for robots: "
   input6 <- getLine
   let robots = (read input6 :: Int)
+  -- let robots = 20
 
-  putStrLn "enter value for robots ia [1 prefer child, 2 prefer trash]: "
+  putStrLn "enter value for robots ia [1 prefer child, 2 prefer trash, 3 reactive]: "
   input7 <- getLine
   let iaRobots = (read input7 :: Int)
+  -- let iaRobots = 3
 
   let boardEmpty = board r c
 
   g <- newStdGen
   let seed = fst (random g)
+  -- let seed = 0
   let boardWithCorrals = addCorralsBoard seed kids boardEmpty
   let boardWithObstacles = addGenericBoard (seed + 1) "obstacle" obstacles boardWithCorrals
   let boardWithChild = addGenericBoard (seed + 2) "child" kids boardWithObstacles
